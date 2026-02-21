@@ -1,15 +1,14 @@
-﻿namespace CredentialsInUrlParser;
+﻿namespace UriCredentialParser;
 
-// ReSharper disable once InconsistentNaming
-public class CIU
+public class CredentialsParser
 {
     /// <summary>
-    /// Parse a credentials-in-url url
+    /// Parses a given URL string into a <see cref="ConnectionParameters"/> object containing the components of the connection information.
     /// </summary>
-    /// <param name="url">A credentialed url</param>
-    /// <returns>The <see cref="ConnectionParameters"/>The parsed connection parameters</returns>
-    /// <exception cref="ArgumentNullException">Thrown on null input</exception>
-    /// <exception cref="ArgumentException">Thrown on empty or whitespace input</exception>
+    /// <param name="url">The URL string to parse. This must be a valid absolute URI.</param>
+    /// <returns>An instance of <see cref="ConnectionParameters"/> representing the parsed connection details.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the provided <paramref name="url"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when the provided <paramref name="url"/> is empty, contains only whitespace, or is not a valid URL.</exception>
     public static ConnectionParameters Parse(string url)
     {
         if (url == null)
