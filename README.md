@@ -2,46 +2,51 @@
 
 This package replaces both [PostgresConnString.NET](https://github.com/bolorundurowb/PostgresConnString.NET/tree/master) and [mongo-url-parser](https://github.com/bolorundurowb/mongo-url-parser) as they are very basic packages.
 
-It aims to grant general .NET support for parsing and converting urls in the form "scheme://user:password@host:port/database?connectionparameters" also known as Credential-In-Url and converting it to formats easily used by the database service providers for .NET.
-
+It aims to grant general .NET support for parsing and converting URLs in the form "scheme://user:password@host:port/database?connectionparameters" (also known as Credential-In-Url) and converting them to formats easily used by database service providers for .NET.
 
 ## Installation
 
-You can install the package from nuget
+You can install the package from NuGet:
 
-```
+```bash
 Install-Package ciu-parser
-```
-
-or
 
 ```
+
+or via the .NET CLI:
+
+```bash
 dotnet add package ciu-parser
-```
-
-or for paket
 
 ```
+
+or for Paket:
+
+```bash
 paket add ciu-parser
+
 ```
 
 ## Usage
 
-### Parsing Urls
+### Parsing URLs
 
-To parse a url
+To parse a URL:
 
 ```csharp
-using CredentialsInUrlParser;
-...
-var details = CIU.Parse("postgres://someuser:somepassword@somehost:381/somedatabase");
+using UriCredentialParser;
+
+// ...
+
+var details = CredentialsParser.Parse("postgres://someuser:somepassword@somehost:381/somedatabase");
+
 ```
 
-The resulting details contains a subset of the following properties:
+The resulting `ConnectionParameters` object contains the following properties:
 
 * `Scheme` - Database server scheme
 * `HostName` - Database server hostname
-* `Port` - port on which to connect
+* `Port` - Port on which to connect
 * `UserName` - User with which to authenticate to the server
 * `Password` - Corresponding password
 * `DatabasePath` - Database name within the server
@@ -49,28 +54,37 @@ The resulting details contains a subset of the following properties:
 
 ### Exports
 
-Currently, this library allows for generating an Npgsql compatible connection strings. With the following parameters
+Currently, this library allows for generating Npgsql-compatible connection strings with the following parameters:
 
-* `pooling`: type: boolean, default: true
-* `trustServerCertificate`: type: boolean, default: true
-* `sslMode`: type: enum, default: Prefer
+* `pooling`: type: boolean, default: `true`
+* `sslMode`: type: `PostgresSSLMode` (enum), default: `Prefer`
+* `trustServerCertificate`: type: boolean, default: `true`
 
 ```csharp
-using CredentialsInUrlParser;
-...
-var details = CIU.Parse("postgres://someuser:somepassword@somehost:381/somedatabase");
-var connString = details.ToNpgsqlSConnectionString(); //User ID=someuser;Password=somepassword;Server=somehost;Port=381;Database=somedatabase;Pooling=true;SSL Mode=Prefer;Trust Server Certificate=true
+using UriCredentialParser;
+using UriCredentialParser.Enums;
+
+// ...
+
+var details = CredentialsParser.Parse("postgres://someuser:somepassword@somehost:381/somedatabase");
+var connString = details.ToNpgsqlConnectionString(); 
+// Result: User ID=someuser;Password=somepassword;Server=somehost;Port=381;Database=somedatabase;Pooling=true;SSL Mode=Prefer;Trust Server Certificate=true
+
 ```
 
-This library also allows for generating a MongoDB compatible connection string and database name.
+This library also allows for generating a MongoDB-compatible connection string alongside the extracted database name:
 
 ```csharp
-using CredentialsInUrlParser;
-...
-var details = CIU.Parse("mongodb://user:password@host:port/database-name?otheroptions");
-var (dbUrl, dbName)  = details.ToMongoConnectionSplit(); 
+using UriCredentialParser;
+
+// ...
+
+var details = CredentialsParser.Parse("mongodb://user:password@host:port/database-name?otheroptions");
+var (dbUrl, dbName) = details.ToMongoConnectionSplit(); 
+
 // dbUrl: mongodb://user:password@host:port?otheroptions
 // dbName: database-name
+
 ```
 
 ## Contributing
