@@ -1,4 +1,4 @@
-# dotnet-credentials-in-url-parser
+# Uri Credential Parser
 
 This package replaces both [PostgresConnString.NET](https://github.com/bolorundurowb/PostgresConnString.NET/tree/master) and [mongo-url-parser](https://github.com/bolorundurowb/mongo-url-parser) as they are very basic packages.
 

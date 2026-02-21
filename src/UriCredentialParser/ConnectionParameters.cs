@@ -1,5 +1,10 @@
 ﻿namespace UriCredentialParser;
 
+/// <summary>
+/// Represents a set of connection parameters used for establishing connections to a resource,
+/// such as a database or a server. This class encapsulates connection details such as
+/// scheme, hostname, port, database path, credentials, and additional query parameters.
+/// </summary>
 public class ConnectionParameters
 {
     /// <summary>
@@ -43,16 +48,12 @@ public class ConnectionParameters
     public ConnectionParameters() { }
 
     /// <summary>
-    /// Initialize with specified values
+    /// Represents a set of connection parameters used for establishing connections to a resource,
+    /// such as a database or a server. This class encapsulates connection details such as
+    /// scheme, hostname, port, database path, credentials, and additional query parameters.
     /// </summary>
-    /// <param name="scheme">The database scheme</param>
-    /// <param name="hostName">The database server host address</param>
-    /// <param name="userName">The user name</param>
-    /// <param name="password">The password</param>
-    /// <param name="databasePathPath">The database name</param>
-    /// <param name="port">The port the database is on</param>
-    /// <param name="additionalQueryParameters">Any query parameters</param>
-    public ConnectionParameters(string? scheme, string? hostName, string? userName, string? password, string? databasePathPath,
+    public ConnectionParameters(string? scheme, string? hostName, string? userName, string? password,
+        string? databasePathPath,
         int? port, string? additionalQueryParameters)
     {
         Scheme = scheme;
