@@ -1,5 +1,7 @@
 # Uri Credential Parser
 
+[![.NET Build, Test and Coverage](https://github.com/bolorundurowb/UriCredentialParser/actions/workflows/dotnet.yml/badge.svg)](https://github.com/bolorundurowb/UriCredentialParser/actions/workflows/dotnet.yml) [![codecov](https://codecov.io/gh/bolorundurowb/dotnet-credentials-in-url-parser/graph/badge.svg?token=36BZ72JVU7)](https://codecov.io/gh/bolorundurowb/dotnet-credentials-in-url-parser)
+
 This package replaces both [PostgresConnString.NET](https://github.com/bolorundurowb/PostgresConnString.NET/tree/master) and [mongo-url-parser](https://github.com/bolorundurowb/mongo-url-parser) as they are very basic packages.
 
 It aims to grant general .NET support for parsing and converting URLs in the form "scheme://user:password@host:port/database?connectionparameters" (also known as Credential-In-Url) and converting them to formats easily used by database service providers for .NET.
