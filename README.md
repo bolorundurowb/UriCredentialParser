@@ -1,6 +1,6 @@
 # Uri Credential Parser
 
-[![.NET Build, Test and Coverage](https://github.com/bolorundurowb/UriCredentialParser/actions/workflows/dotnet.yml/badge.svg)](https://github.com/bolorundurowb/UriCredentialParser/actions/workflows/dotnet.yml) [![codecov](https://codecov.io/gh/bolorundurowb/dotnet-credentials-in-url-parser/graph/badge.svg?token=36BZ72JVU7)](https://codecov.io/gh/bolorundurowb/dotnet-credentials-in-url-parser)
+[![Build, Test & Coverage](https://github.com/bolorundurowb/UriCredentialParser/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/bolorundurowb/UriCredentialParser/actions/workflows/build-and-test.yml) [![codecov](https://codecov.io/gh/bolorundurowb/UriCredentialParser/graph/badge.svg?token=36BZ72JVU7)](https://codecov.io/gh/bolorundurowb/UriCredentialParser)
 
 This package replaces both [PostgresConnString.NET](https://github.com/bolorundurowb/PostgresConnString.NET/tree/master) and [mongo-url-parser](https://github.com/bolorundurowb/mongo-url-parser) as they are very basic packages.
 
