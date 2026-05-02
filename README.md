@@ -4,8 +4,6 @@
 
 Small .NET library for parsing **credential-in-URL** connection strings (for example `scheme://user:password@host:port/database?options`) into structured values, and for turning those values into **Npgsql** or **MongoDB**-style connection strings when you need them.
 
-NuGet package ID: **`ciu-parser`** (assembly/namespace: `UriCredentialParser`). Targets **.NET Standard 1.6**, so it can be referenced from a wide range of .NET runtimes.
-
 ## Installation
 
 **Package Manager (Visual Studio)**
@@ -62,7 +60,7 @@ If the URL has no user info, user name and password are returned as **empty stri
 | Empty or whitespace | `ArgumentException` |
 | Not a valid URI | `UriFormatException` (from `System.Uri`) |
 
-## `ConnectionParameters`
+## Connection Parameters
 
 The object returned by `Parse` (or constructed manually) has:
 
