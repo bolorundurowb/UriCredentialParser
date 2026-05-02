@@ -2,125 +2,84 @@
 
 [![Build, Test & Coverage](https://github.com/bolorundurowb/UriCredentialParser/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/bolorundurowb/UriCredentialParser/actions/workflows/build-and-test.yml) [![codecov](https://codecov.io/gh/bolorundurowb/UriCredentialParser/graph/badge.svg?token=36BZ72JVU7)](https://codecov.io/gh/bolorundurowb/UriCredentialParser)
 
-Small .NET library for parsing **credential-in-URL** connection strings (for example `scheme://user:password@host:port/database?options`) into structured values, and for turning those values into **Npgsql** or **MongoDB**-style connection strings when you need them.
+A lightweight .NET library for parsing **Credential-in-URL** connection strings (e.g., `scheme://user:password@host:port/database?options`) into structured objects, and converting them into **Npgsql** (PostgreSQL) or **MongoDB** connection strings.
+
+## Features
+
+- Parse complex database URIs into structured `ConnectionParameters`.
+- Support for multiple schemes (PostgreSQL, MongoDB, etc.).
+- Convert parsed parameters to standard connection strings for Npgsql and MongoDB.
+- Handles query parameters as a dictionary.
+- Lightweight and targets `.NET Standard 2.0`.
+- Utilises C# 14 Extension Types for a clean and intuitive API.
 
 ## Installation
 
-**Package Manager (Visual Studio)**
-
-```powershell
-Install-Package ciu-parser
-```
-
-**.NET CLI**
+### NuGet
 
 ```bash
 dotnet add package ciu-parser
 ```
 
-**Paket**
-
-```bash
-paket add ciu-parser
-```
-
-## Quick start
+## Quick Start
 
 ```csharp
 using UriCredentialParser;
 
+// Parse a connection URI
 var details = CredentialsParser.Parse(
-    "postgres://someuser:somepassword@somehost:381/somedatabase?sslmode=require");
+    "postgres://admin:secret@localhost:5432/testdb?timeout=30&sslmode=require");
 
-// details.Scheme, HostName, Port, UserName, Password, DatabasePath, AdditionalQueryParameters
+Console.WriteLine(details.HostName); // localhost
+Console.WriteLine(details.UserName); // admin
+Console.WriteLine(details.AdditionalQueryParameters["timeout"]); // 30
 ```
 
-Add `using UriCredentialParser.Enums;` when you use `PostgresSSLMode` with `ToNpgsqlConnectionString`.
-
-## Parsing rules
-
-`CredentialsParser.Parse` expects a **non-empty** string that is a valid **absolute** URI (as accepted by `System.Uri`).
-
-| Part of the URL | Mapped property |
-|-----------------|-----------------|
-| Scheme | `Scheme` |
-| Host | `HostName` |
-| Port (when `Uri.Port` is greater than zero) | `Port`; otherwise `null` |
-| User info `user:password` | `UserName`, `Password` (each may be empty if omitted) |
-| Absolute path (leading and trailing `/` removed) | `DatabasePath` |
-| Query string, including `?` | `AdditionalQueryParameters` |
-
-If the URL has no user info, user name and password are returned as **empty strings** (not null).
-
-### Errors
-
-| Input | Exception |
-|-------|-----------|
-| `null` | `ArgumentNullException` |
-| Empty or whitespace | `ArgumentException` |
-| Not a valid URI | `UriFormatException` (from `System.Uri`) |
-
-## Connection Parameters
-
-The object returned by `Parse` (or constructed manually) has:
-
-- **`Scheme`** – URI scheme (for example `postgres`, `mongodb`).
-- **`HostName`** – Host from the URI.
-- **`Port`** – `null` when the URI has no explicit port or the default port semantics apply (`Uri.Port` is not used when it is `<= 0` in the parser).
-- **`UserName`** / **`Password`** – From user info; may be empty strings.
-- **`DatabasePath`** – Taken from the URI path with leading and trailing `/` removed (may include further `/` segments if present in the URL).
-- **`AdditionalQueryParameters`** – Full query part as stored by the parser (typically starts with `?` when present).
-
-## PostgreSQL (Npgsql) connection string
-
-Extension: `ConnectionParameters.ToNpgsqlConnectionString(...)`.
-
-Optional arguments (with defaults):
-
-| Parameter | Type | Default |
-|-----------|------|---------|
-| `pooling` | `bool` | `true` |
-| `sslMode` | `PostgresSSLMode` | `Prefer` |
-| `trustServerCertificate` | `bool` | `true` |
-
-`PostgresSSLMode` values: `Prefer`, `Allow`, `Disable`, `Require`, `VerifyCA`, `VerifyFull`.
+### PostgreSQL (Npgsql)
 
 ```csharp
 using UriCredentialParser;
 using UriCredentialParser.Enums;
 
-var details = CredentialsParser.Parse("postgres://u:p@host:5432/db");
 var connString = details.ToNpgsqlConnectionString(
-    pooling: false,
-    sslMode: PostgresSSLMode.Require,
-    trustServerCertificate: false);
+    pooling: true,
+    sslMode: PostgresSSLMode.Prefer
+);
 ```
 
-The result is a semicolon-separated connection string with keys such as `User ID`, `Password`, `Server`, `Port`, `Database`, `Pooling`, `SSL Mode`, and `Trust Server Certificate`. If `Port` is null on the parameters object, the `Port=` fragment may be empty; set `Port` explicitly when your provider requires it.
-
-## MongoDB URL split
-
-Extension: `ConnectionParameters.ToMongoConnectionSplit()`.
-
-Returns `(string DatabaseUrl, string? DatabaseName)`:
-
-- **`DatabaseUrl`** – Rebuilds `scheme://[user:password@]host[:port]` and appends **`AdditionalQueryParameters`** unchanged (so query options remain on the URL, not in the database name).
-- **`DatabaseName`** – The parsed database path (may be null if none).
+### MongoDB
 
 ```csharp
 using UriCredentialParser;
 
-var details = CredentialsParser.Parse(
-    "mongodb://user:password@host:27017/database-name?retryWrites=true");
-
 var (databaseUrl, databaseName) = details.ToMongoConnectionSplit();
-// databaseUrl: mongodb://user:password@host:27017?retryWrites=true
-// databaseName: database-name
+// databaseUrl: mongodb://admin:secret@localhost:5432?timeout=30&sslmode=require
+// databaseName: testdb
 ```
 
-## Security
+## Parsing Rules
 
-URLs often contain **secrets** (passwords, tokens). Avoid logging raw URLs or full connection strings, storing them in plain text longer than necessary, or sending them to analytics. Treat `ConnectionParameters` like any other credential-bearing object.
+`CredentialsParser.Parse` expects a valid absolute URI.
+
+| Part of URL | Property | Description |
+|-------------|----------|-------------|
+| `scheme` | `Scheme` | e.g., `postgres`, `mongodb`, `redis` |
+| `user:pass` | `UserName` / `Password` | Extracted from UserInfo |
+| `host` | `HostName` | Server address |
+| `port` | `Port` | Numeric port or `null` if omitted |
+| `/path` | `DatabasePath` | The path segment (usually database name) |
+| `?query` | `AdditionalQueryParameters` | A `Dictionary<string, string>` of options |
+
+## ConnectionParameters Record
+
+The `ConnectionParameters` record encapsulates the parsed data:
+
+- **`Scheme`**: The URI scheme.
+- **`HostName`**: The server host.
+- **`UserName`** / **`Password`**: Credentials (defaults to empty strings if missing).
+- **`DatabasePath`**: The database name or path.
+- **`Port`**: The port number (`int?`).
+- **`AdditionalQueryParameters`**: A dictionary of all query parameters.
 
 ## Relationship to other packages
 
@@ -128,18 +87,18 @@ This library supersedes the narrower [PostgresConnString.NET](https://github.com
 
 ## Contributing
 
-Contributions (issues and pull requests) are welcome.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-**Layout**
+### Development
 
-- `src/UriCredentialParser` – library (`CredentialsParser`, `ConnectionParameters`, `Extensions`, `Enums`).
-- `src/UriCredentialParser.Tests` – unit tests (NUnit).
-
-**Build and test** (from the `src` directory):
+To build and test the project:
 
 ```bash
+cd src
 dotnet build UriCredentialParser.slnx
-dotnet test UriCredentialParser.Tests/UriCredentialParser.Tests.csproj
+dotnet test
 ```
 
-CI runs on GitHub Actions (see `.github/workflows/build-and-test.yml`). Aim for tests that cover new behavior or fixes, and keep public API changes backward compatible unless you are intentionally shipping a major release.
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

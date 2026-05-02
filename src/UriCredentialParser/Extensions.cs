@@ -40,7 +40,7 @@ public static class Extensions
             string userInfo;
 
             if (string.IsNullOrWhiteSpace(connectionParameters.UserName) &&
-                string.IsNullOrWhiteSpace(connectionParameters.UserName))
+                string.IsNullOrWhiteSpace(connectionParameters.Password))
                 userInfo = string.Empty;
             else
                 userInfo = $"{connectionParameters.UserName}:{connectionParameters.Password}@";
