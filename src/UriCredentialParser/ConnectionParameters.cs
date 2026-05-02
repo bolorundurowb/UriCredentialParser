@@ -43,11 +43,6 @@ public class ConnectionParameters
     public string? AdditionalQueryParameters { get; set; }
 
     /// <summary>
-    /// Initialize with default values
-    /// </summary>
-    public ConnectionParameters() { }
-
-    /// <summary>
     /// Represents a set of connection parameters used for establishing connections to a resource,
     /// such as a database or a server. This class encapsulates connection details such as
     /// scheme, hostname, port, database path, credentials, and additional query parameters.
