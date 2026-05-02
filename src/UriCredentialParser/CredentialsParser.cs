@@ -1,6 +1,6 @@
 ﻿namespace UriCredentialParser;
 
-public class CredentialsParser
+public static class CredentialsParser
 {
     /// <summary>
     /// Parses a given URL string into a <see cref="ConnectionParameters"/> object containing the components of the connection information.
@@ -26,6 +26,16 @@ public class CredentialsParser
         var password = authParts[1];
         var databaseName = uri.AbsolutePath.Trim('/');
 
-        return new ConnectionParameters(uri.Scheme, uri.Host, userName, password, databaseName, port, uri.Query);
+        var query = uri.Query.TrimStart('?');
+        var additionalParameters = string.IsNullOrWhiteSpace(query)
+            ? null
+            : query.Split(['&'], StringSplitOptions.RemoveEmptyEntries)
+                .Select(p => p.Split(['='], 2))
+                .ToDictionary(
+                    split => split[0],
+                    split => split.Length > 1 ? split[1] : string.Empty
+                );
+
+        return new ConnectionParameters(uri.Scheme, uri.Host, userName, password, databaseName, port, additionalParameters);
     }
 }
