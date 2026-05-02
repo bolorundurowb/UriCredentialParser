@@ -1,67 +1,33 @@
 ﻿namespace UriCredentialParser;
 
 /// <summary>
-/// Represents a set of connection parameters used for establishing connections to a resource,
-/// such as a database or a server. This class encapsulates connection details such as
-/// scheme, hostname, port, database path, credentials, and additional query parameters.
+/// Encapsulates connection details extracted from a URI, such as credentials, host, port, and database path.
 /// </summary>
-public class ConnectionParameters
+/// <param name="Scheme">Gets the URI scheme (e.g., "postgres", "mongodb").</param>
+/// <param name="HostName">Gets the host name or IP address of the database server.</param>
+/// <param name="UserName">Gets the username for authentication.</param>
+/// <param name="Password">Gets the password for authentication.</param>
+/// <param name="DatabasePath">Gets the database name or path extracted from the URI.</param>
+/// <param name="Port">Gets the port number which the database server is listening on.</param>
+/// <param name="AdditionalQueryParameters">Gets additional query parameters parsed from the URI query string.</param>
+public record ConnectionParameters(
+    string? Scheme,
+    string? HostName,
+    string? UserName,
+    string? Password,
+    string? DatabasePath,
+    int? Port,
+    Dictionary<string, string>? AdditionalQueryParameters)
 {
     /// <summary>
-    /// The database scheme
+    /// Combines additional query parameters into a single query string by concatenating
+    /// key-value pairs with an equals sign ('=') and separating them with an ampersand ('&').
     /// </summary>
-    public string? Scheme { get; set; }
-        
-    /// <summary>
-    /// The database server host address
-    /// </summary>
-    public string? HostName { get; set; }
-
-    /// <summary>
-    /// The port the database is on
-    /// </summary>
-    public int? Port { get; set; }
-
-    /// <summary>
-    /// The database name
-    /// </summary>
-    public string? DatabasePath { get; set; }
-
-    /// <summary>
-    /// The login user name
-    /// </summary>
-    public string? UserName { get; set; }
-
-    /// <summary>
-    /// The login password
-    /// </summary>
-    public string? Password { get; set; }
-
-    /// <summary>
-    /// The 
-    /// </summary>
-    public string? AdditionalQueryParameters { get; set; }
-
-    /// <summary>
-    /// Initialize with default values
-    /// </summary>
-    public ConnectionParameters() { }
-
-    /// <summary>
-    /// Represents a set of connection parameters used for establishing connections to a resource,
-    /// such as a database or a server. This class encapsulates connection details such as
-    /// scheme, hostname, port, database path, credentials, and additional query parameters.
-    /// </summary>
-    public ConnectionParameters(string? scheme, string? hostName, string? userName, string? password,
-        string? databasePathPath,
-        int? port, string? additionalQueryParameters)
-    {
-        Scheme = scheme;
-        HostName = hostName;
-        UserName = userName;
-        Password = password;
-        DatabasePath = databasePathPath;
-        Port = port;
-        AdditionalQueryParameters = additionalQueryParameters;
-    }
+    /// <returns>
+    /// A string representing the combined query parameters if the AdditionalQueryParameters
+    /// property contains any key-value pairs; otherwise, null if no additional parameters are present.
+    /// </returns>
+    public string? ComposeAdditionalQueryParameters() => AdditionalQueryParameters == null
+        ? null
+        : string.Join("&", AdditionalQueryParameters.Select(kvp => $"{kvp.Key}={kvp.Value}"));
 }
