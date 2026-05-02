@@ -17,4 +17,17 @@ public record ConnectionParameters(
     string? Password,
     string? DatabasePath,
     int? Port,
-    Dictionary<string, string>? AdditionalQueryParameters);
+    Dictionary<string, string>? AdditionalQueryParameters)
+{
+    /// <summary>
+    /// Combines additional query parameters into a single query string by concatenating
+    /// key-value pairs with an equals sign ('=') and separating them with an ampersand ('&').
+    /// </summary>
+    /// <returns>
+    /// A string representing the combined query parameters if the AdditionalQueryParameters
+    /// property contains any key-value pairs; otherwise, null if no additional parameters are present.
+    /// </returns>
+    public string? ComposeAdditionalQueryParameters() => AdditionalQueryParameters == null
+        ? null
+        : string.Join("&", AdditionalQueryParameters.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+}
