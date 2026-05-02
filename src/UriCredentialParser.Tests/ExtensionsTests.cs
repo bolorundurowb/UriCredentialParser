@@ -36,7 +36,7 @@ public class ExtensionsTests
     public void ToMongoConnectionSplit_WithFullCredentialsAndPort_ReturnsCorrectTuple()
     {
         // Arrange
-        var parameters = new ConnectionParameters("mongodb", "mongo-cluster", "admin", "pass123", "appdb", 27017, "?retryWrites=true");
+        var parameters = new ConnectionParameters("mongodb", "mongo-cluster", "admin", "pass123", "appdb", 27017, new Dictionary<string, string> { { "retryWrites", "true" } });
 
         // Act
         var (url, dbName) = parameters.ToMongoConnectionSplit();
